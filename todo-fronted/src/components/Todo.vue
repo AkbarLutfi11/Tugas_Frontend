@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>Selamat Datang</h1>
+    <h1>Masukkan Panggilan</h1>
     <ul>
       <li v-for="item in todos" :key="item.ID_Sayang">{{ item.Nama_Sayang }}<button @click="hapus(item.ID_Sayang)">X</button></li>
     </ul>
@@ -19,8 +19,10 @@ export default {
       myText: ''
     }
   },
-  created: function () {
-    axios.get('http://localhost:3000/Pacar') 
+  created: function() {
+    const username = localStorage.getItem('User')
+    const password = localStorage.getItem('Pass')
+    axios.get('http://localhost:3000/Pacar', {headers: {username: username, password: password} }) 
     .then(result=>{
       this.todos = result.data
     })
@@ -28,9 +30,13 @@ export default {
   methods: {
     tambah: function(){
       const newItem = {Nama_Sayang:this.myText}
-      axios.post('http://localhost:3000/Pacar',newItem)
-      this.todos.push(newItem)
+      const username = localStorage.getItem('User')
+      const password = localStorage.getItem('Pass')
+      axios.post('http://localhost:3000/Pacar',newItem, {headers: {username, password} })
+      .then(()=> {
+      // this.todos.push(newItem)
       location.reload()
+      })
     },
     hapus: function(id){
       axios.delete(`http://localhost:3000/Pacar/${id}`)
